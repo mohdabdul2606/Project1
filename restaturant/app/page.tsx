@@ -8,19 +8,24 @@ export default function Home() {
    };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen ">
-      <div className="bg-white/90 backdrop-blur-md border border-white-300 rounded-xl shadow-lg p-6">
-      <img src="logo.avif" alt=" logo " className=" ml-28 w-30 h-30" />
-      <h1 className="text-lg font-semibold text-black-900 tracking-wide">
-  Capella Bakery
-</h1>
+<main
+  className="
+    flex flex-col items-center justify-center min-h-screen
+    bg-cover bg-center bg-no-repeat
+    md:bg-auto md:bg-top
+  "
+  style={{ backgroundImage: "url('/background.jpg')" }}
+>
 
-
-      {/* <p className="text-gray-600 mt-6 ml-28">Delicious food, fresh taste!</p> */}
-      <button 
-      onClick={handleClick}
-       className="mt-4 ml-38 bg-orange-600 text-white px-4 py-3 rounded-full">Order Now</button>
-       </div>
+    <div className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-2xl shadow-xl p-8 w-80 max-w-sm text-center ">
+      <img src="logo.avif" alt="logo image" className="w-20 h-20 mx-auto mb-4 rounded-md" />
+      <h1 className="text-xl font-bold text-black mb-4">Capella Bakery</h1>
+      <button
+        onClick={handleClick}
+        className="bg-orange-600 text-white px-6 py-2 mx-auto rounded-full flex items-center gap-2 hover:bg-gray-400 transition"
+      >
+        Order Now  →   </button>
+    </div>
     </main>
   );
 }
