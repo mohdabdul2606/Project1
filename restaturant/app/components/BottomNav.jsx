@@ -64,7 +64,7 @@ export default function BottomNav() {
                 key={it.href}
                 href={it.href}
                 className={`flex flex-col items-center text-xs gap-1 py-2 px-1 w-full transition-colors ${
-                  active ? "text-blue-600" : "text-gray-500 hover:text-gray-800"
+                  active ? "text-orange-600" : "text-gray-500 hover:text-gray-800"
                 }`}
                 aria-current={active ? "page" : undefined}
               >

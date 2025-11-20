@@ -11,7 +11,7 @@ export default function Home() {
 <main
   className="
     flex flex-col items-center justify-center min-h-screen
-    bg-cover bg-center bg-no-repeat
+    bg-cover bg-center bg-no-repeat bg-white
     md:bg-auto md:bg-top
   "
   style={{ backgroundImage: "url('/background.jpg')" }}
