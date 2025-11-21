@@ -1,0 +1,382 @@
+// variation popup -------------------------
+var isClicked = false;
+$(".addongroup").on('click', function(e){
+    e.preventDefault();
+    if (isClicked == true) {
+        return;
+    } else {
+        isClicked = true;
+        var itemid = $(this).attr('data-id');  
+        var image_click = $(this).hasClass('img-fluid');
+        var url = site_url+"orders/getaddon"; 
+        var variation = $("."+itemid+" .data-VA").val();  
+        var normal_item_click = $(this).hasClass('normal-item');
+        $.ajax({
+            type: "POST",
+            url: url, 
+            data: {'itemid': itemid},
+            success: function (response)
+            {
+                if(response){ 
+                    isClicked = false;
+                    $("#variationpopup").empty();
+                    $("#variationpopup").append(response);
+                    // $('#variationaddonpopupmodal').modal('show'); 
+                    $.fancybox.open({
+                        src: '#variationaddonpopupmodal',
+                        type: 'inline',
+                        opts: {
+                            buttons: [], // disables all default buttons including close
+                            smallBtn: false,// disables small close (X) button
+                            touch: false,  // blocks swipe gesture
+                            beforeShow:function(){
+                                isProgrammaticScroll = true;
+                                document.documentElement.classList.add('no-scroll');
+                                document.body.classList.add('no-scroll');
+                                if(image_click == false){
+                                    $(".item-image-container").hide();
+                                    $(".item-addon-image").show();
+                                }else{
+                                    $(".item-image-container").show();
+                                    $(".item-addon-image").hide();
+                                }
+                                if(normal_item_click){
+                                    $(".submitbtnform").text("Add Item");
+                                }else{
+                                    $(".submitbtnform").text("Add to Cart");
+                                }
+                            },
+                            afterShow: function (instance, current) {
+                                window.$variationaddonpopupmodal = instance;
+                            },
+                            afterClose: function (instance, current) {
+                                window.$variationaddonpopupmodal = undefined;
+                                isProgrammaticScroll = false;
+                                document.documentElement.classList.remove('no-scroll');
+                                document.body.classList.remove('no-scroll');
+                            }
+                        }
+                    });
+                } 
+            }
+        }); 
+    }
+});
+
+// variation popup related-------------------------
+$(document).on("click",".addongroupulcls li a",function() {
+    $(".addongroupulcls li a").removeClass("active");
+    $(this).addClass("active");
+});
+
+// Single item, add without adddon and variation-------------------------
+var isClickedadd = false;
+$(".additem").on('click', function(e){
+    e.preventDefault();
+    if (isClickedadd == true) {
+        return;
+    } else {
+        isClickedadd = true;
+        var itemid = $(this).attr('data-id');  
+        var datatittle = $(this).attr('data-title');
+        var dataprice = $(this).attr('data-price');
+        var datacategory = $(this).attr('data-category');
+        var datacurreny = $(this).attr('data-curreny');
+
+        var keyexecute = $(this).attr('data-type');
+        var url = site_url+"orders/updateUserCart";  
+        $.ajax({
+            type: "POST",
+            url: url, 
+            data: {'itemid': itemid, action : 'add', quantity: 1},
+            success: function (response)
+            { 
+                if(response){
+                    var mainArr = $.parseJSON(response); 
+                    if(mainArr.key != undefined){
+                        isClickedadd = false;
+                        if(mainArr.cartcount > 0){
+                            toggleCartAndMenu()
+                        } else {
+                            $('.cart-bottom').hide()
+                        }
+                        var currentcounter = mainArr.cartcount;
+                        $('.cart-bottom-addcart').show();
+                        $(".totalcartitems").html(parseInt(currentcounter) + ' Items in cart');
+                        $(".totalamountclsval").html(mainArr.carttotalamount);
+                        $(".cart-item-add-delete-counter-"+itemid+" .crtInpt").val(1);
+                        $(".cart-item-add-delete-counter-"+itemid).show();
+                        $(".FIT_"+itemid+" .additem").hide();
+                        $(".IT_"+itemid+" .additem").hide();
+                        $(".FIT_"+itemid+" .cart-item-add-delete-counter-"+itemid).attr('data-key', mainArr.key);
+                        $(".IT_"+itemid+" .cart-item-add-delete-counter-"+itemid).attr('data-key', mainArr.key);
+                        if(tag_manager == 1){
+                            dataLayer.push({
+                            'event': 'addToCart',
+                            'ecommerce': {
+                            'currencyCode': datacurreny,
+                            'add': {                                // 'add' actionFieldObject measures.
+                                'actionField': {'list': 'Search Results'},      // Optional list property.
+                                'products': [{                        //  adding a product to a shopping cart.
+                                'name': datatittle,
+                                'id': itemid,
+                                'price': dataprice,
+                                'brand': 'food',
+                                'category': datacategory,
+                                'variant': '',
+                                'quantity': 1
+                                }]
+                            }
+                            }
+                        });
+                        console.log(datatittle+'------'+itemid+'--------'+dataprice+'---------------'+datacategory+'--------');
+                        }
+                    }
+
+                } 
+
+            }
+        }); 
+    }
+}); 
+
+
+// increase quantity
+$('.addmorecounter').click(function(e){ 
+     e.preventDefault(); 
+     var keyexecute = $(this).attr('data-type');
+     var currentitemkey = $(this).parent().attr('data-key');
+     var currentitem = $(this).parent().attr('data-id');
+     var quantity = parseInt($("."+keyexecute+currentitem+" .crtInpt").val());  
+     
+     var pusharr = [];
+     pusharr['itemid'] = currentitem;
+     pusharr['datatittle'] = $(this).attr('data-title');
+     pusharr['dataprice'] = $(this).attr('data-price');;
+     pusharr['datacategory'] = $(this).attr('data-category');
+     pusharr['datacurreny'] = $(this).attr('data-curreny');
+     var newquantity = quantity + 1;
+     var diff = newquantity - quantity;
+     $(".cart-item-add-delete-counter-"+currentitem+" .crtInpt").val(newquantity);    
+     if(newquantity > 0){
+        processcartajaxmenu(currentitemkey, diff, 'add', pusharr);
+     }
+
+
+ });
+
+  // decerese quantity
+  $('.deceresecounter').click(function(e){
+     e.preventDefault(); 
+     var keyexecute = $(this).attr('data-type');
+     var currentitemkey = $(this).parent().attr('data-key');
+     var currentitem = $(this).parent().attr('data-id');
+     var quantity = parseInt($("."+keyexecute+currentitem+" .crtInpt").val());  
+     var newquantity = quantity - 1;
+     var diff = quantity - newquantity;
+     $(".cart-item-add-delete-counter-"+currentitem+" .crtInpt").val(newquantity); 
+     
+     var pusharr = [];
+     pusharr['itemid'] = currentitem;
+     pusharr['datatittle'] = $(this).attr('data-title');
+     pusharr['dataprice'] = $(this).attr('data-price');;
+     pusharr['datacategory'] = $(this).attr('data-category');
+     pusharr['datacurreny'] = $(this).attr('data-curreny');
+     
+     if(newquantity <= 0)
+     {
+        processdeletemenu(keyexecute, currentitemkey, currentitem, pusharr);
+     }
+     else
+     { 
+         processcartajaxmenu(currentitemkey, diff, 'delete', pusharr);
+     } 
+
+ });
+ 
+ 
+function processdeletemenu(keyexecute, currentitemkey, currentitem, pusharr) {
+        processcartajaxmenu(currentitemkey, '0', 'remove');   
+        $(".cart-item-add-delete-counter-"+currentitem).removeAttr('data-key');
+        $(".cart-item-add-delete-counter-"+currentitem+' .crtInpt').val('');
+        $(".cart-item-add-delete-counter-"+currentitem).hide();
+        $(".FIT_"+currentitem+" .additem").show();
+        $(".IT_"+currentitem+" .additem").show();
+        
+        if(tag_manager == 1){
+            // data layer push ----------remove from cart        
+            dataLayer.push({
+                'event': 'removeFromCart',
+                'ecommerce': {
+                  'currencyCode': pusharr.datacurreny,
+                  'remove': {                                // 'add' actionFieldObject measures.
+                    'actionField': {'list': 'Search Results'},      // Optional list property.
+                    'products': [{                        //  adding a product to a shopping cart.
+                      'name': pusharr.datatittle,
+                      'id': pusharr.itemid,
+                      'price': pusharr.dataprice,
+                      'brand': 'food',
+                      'category': pusharr.datacategory,
+                      'variant': '',
+                      'quantity': 1
+                     }]
+                  }
+                }
+            });
+            console.log(pusharr.datatittle+' '+''+'------'+pusharr.itemid+'--------'+pusharr.dataprice+'---------------'+pusharr.datacategory+'--------');
+        } 
+}
+
+
+// ajax call on quantity change
+function processcartajaxmenu(currentitem, diff, action, pusharr){
+    // update qua in cart
+    var url = site_url+"orders/processcart";  
+    $.ajax({
+        type: "POST",
+        url: url, 
+        data: {itemkey:currentitem, diffcount : diff, action : action},
+        success: function (response) {   
+            if(response == '9') {
+                window.location.reload();
+                return false;
+            }
+            var mainArr = $.parseJSON(response); 
+            if(mainArr.cartcount > 0){
+                toggleCartAndMenu()
+            } else {
+                $('.cart-bottom').hide()
+            }
+            // update counter
+            $(".totalcartitems").html(parseInt(mainArr.cartcount) + ' Items in cart');
+            $(".totalamountclsval").html(parseFloat(mainArr.carttotalamount).toFixed(2));
+
+            //$(".cart-counter").toggleClass("flipping"); 
+            
+            if(action == 'add' && tag_manager == 1){
+                    // data layer push ----------
+                    dataLayer.push({
+                        'event': 'addToCart',
+                        'ecommerce': {
+                          'currencyCode': pusharr.datacurreny,
+                          'add': {                                // 'add' actionFieldObject measures.
+                            'actionField': {'list': 'Search Results'},      // Optional list property.
+                            'products': [{                        //  adding a product to a shopping cart.
+                              'name': pusharr.datatittle,
+                              'id': pusharr.itemid,
+                              'price': pusharr.dataprice,
+                              'brand': 'food',
+                              'category': pusharr.datacategory,
+                              'variant': '',
+                              'quantity': 1
+                             }]
+                          }
+                        }
+                      });
+                      
+                console.log(pusharr.datatittle+' '+''+'------'+pusharr.itemid+'--------'+pusharr.dataprice+'---------------'+pusharr.datacategory+'--------');
+            }
+            
+            
+            if(action == 'delete' && tag_manager == 1){
+                
+                // data layer push ----------remove from cart        
+                dataLayer.push({
+                    'event': 'removeFromCart',
+                    'ecommerce': {
+                      'currencyCode': pusharr.datacurreny,
+                      'remove': {                                // 'add' actionFieldObject measures.
+                        'actionField': {'list': 'Search Results'},      // Optional list property.
+                        'products': [{                        //  adding a product to a shopping cart.
+                          'name': pusharr.datatittle,
+                          'id': pusharr.itemid,
+                          'price': pusharr.dataprice,
+                          'brand': 'food',
+                          'category': pusharr.datacategory,
+                          'variant': '',
+                          'quantity': 1
+                         }]
+                      }
+                    }
+                });
+                
+                console.log(pusharr.datatittle+' '+''+'------'+pusharr.itemid+'--------'+pusharr.dataprice+'---------------'+pusharr.datacategory+'--------');
+            }
+            
+        }
+    });
+}
+
+function toggleCartAndMenu(wrapperSelector = '#order-summary-pop-wrapper-new') {
+    const $summaryWrapper = $(wrapperSelector);
+    const isWrapperVisible = $summaryWrapper.length > 0 && $summaryWrapper.is(':visible');
+
+    $('.cart-bottom').show()
+    $('.bottom-menu').show().css('border-radius', isWrapperVisible ? '' : '0');
+}
+
+
+function closeAddonFancybox(){
+    if (window.$variationaddonpopupmodal) {
+        window.$variationaddonpopupmodal.close();
+    }
+}
+
+function closeCartFancybox(){
+    if (window.$cartpopupModal) {
+       window.$cartpopupModal.close();
+    }
+}
+
+function showVerificationFancybox(isformrefresh = 0){
+    $.fancybox.open({
+        src: '#userverificationpoup',
+        type: 'inline',
+        opts: {
+            buttons: [], // disables all default buttons including close
+            smallBtn: false,// disables small close (X) button
+            clickOutside: false, // blocks closing on outside click
+            clickSlide: false,   // blocks swipe slide closing
+            touch: false,        // blocks swipe gesture
+            beforeShow:function(){
+                isProgrammaticScroll = true;
+                document.documentElement.style.overflow = 'hidden'; // html
+                document.body.style.overflow = 'hidden'; // body
+            },
+            afterShow: function (instance, current) {
+                window.$userverificationpoup = instance;
+                if(isformrefresh){
+                    $("#checkout_user_name").focus();
+                }
+            },
+            afterClose: function (instance, current) {
+                window.$userverificationpoup = undefined;
+                isProgrammaticScroll = false;
+                document.documentElement.style.overflow = ''; // reset html
+                document.body.style.overflow = ''; // reset body
+
+                if(isformrefresh){
+                    const $form = $("#userverificationpopup");
+                    if ($form.length) {
+                        $form[0].reset();
+                        $form.validate().resetForm();
+                        console.log('userverificationpopup reset complete');
+                    }
+                }
+            }
+        }
+    });
+}
+
+function closeVerificationFancybox(){
+    if (window.$userverificationpoup) {
+       window.$userverificationpoup.close();
+    }
+}
+
+function closeFancybox(ref) {
+    const instance = ref;
+    if (instance) {
+        instance.close();
+    }
+}
