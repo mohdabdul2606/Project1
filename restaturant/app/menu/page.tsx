@@ -6,7 +6,7 @@ import SearchAndFilters from "../components/SearchAndFilters";
 import CategoryPills from "../components/CategoryPills";
 import MenuSection from "../components/MenuSection";
 import { SECTIONS } from "../data/sections";
-import type { Section } from "../../types";
+import type { Section } from "../../types"; 
 
 export default function MenuPage() {
   const [query, setQuery] = useState("");
