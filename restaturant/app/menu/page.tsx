@@ -97,7 +97,9 @@ export default function MenuPage() {
 
         {/* Sticky search + pills */}
         <div className="sticky top-0 z-40 bg-[#faf9f7]">
-          <SearchAndFilters query={query} setQuery={setQuery} />
+          <SearchAndFilters query={query} setQuery={setQuery} selectedFilter={"all"} setSelectedFilter={function (v: "all" | "veg" | "nonveg" | "egg"): void {
+            throw new Error("Function not implemented.");
+          } } />
           <CategoryPills
             sections={SECTIONS}
             active={active}

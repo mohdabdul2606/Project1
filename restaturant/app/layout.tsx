@@ -1,11 +1,16 @@
 import "./globals.css";
 import BottomNav from "./components/BottomNav";
+import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "App with Bottom Nav",
+  title: "RESTAURANT",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-gray-50">

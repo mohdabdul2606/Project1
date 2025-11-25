@@ -1,116 +1,119 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function OrdersPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"orders" | "items">("orders");
 
+  const goToMenu = () => router.push("/menu");
+
   return (
-    <main className="min-h-screen bg-[#faf9f7] flex flex-col">
+    <main className="bg-[#faf9f7] min-h-screen flex flex-col pb-24">
 
-      {/* HEADER */}
-      <div className="bg-white p-4 shadow-md flex flex-col">
-
-        {/* ROW 1 */}
+      {/* HEADER - Mobile Sticky */}
+      <div className="bg-white px-4 py-3 shadow-sm sticky top-0 z-50">
+        
+        {/* Top Row */}
         <div className="flex items-center justify-between">
-
-          {/* LEFT SIDE */}
           <div className="flex items-center gap-3">
-            <img src="logo.avif" className="w-10 h-10 rounded-md" alt="logo" />
-            <h1 className="text-black text-xl font-bold">Capella Bakery</h1>
+            <img src="/logo.avif" alt="logo" className="w-10 h-10 rounded-md" />
+            <h1 className="text-black text-lg font-semibold">Capella Bakery</h1>
           </div>
 
-          {/* RIGHT SIDE */}
           <div className="flex items-center gap-3">
-            <div className="text-sm text-black bg-gray-200 px-3 py-1 rounded-full">
-              7
-            </div>
-            <button className="text-sm text-black bg-gray-200 px-3 py-1 rounded-full">
+            <span className="text-sm bg-gray-200 px-3 py-1 rounded-full">7</span>
+            <button className="text-sm bg-gray-200 px-3 py-1 rounded-full">
               Group Order
             </button>
           </div>
         </div>
 
-        {/* ROW 2 — Tabs */}
-        <div className="flex items-center mt-3 border-b">
+        {/* Tabs Row */}
+        <div className="flex mt-3 border-b text-sm font-semibold">
 
-          {/* Orders Tab */}
           <button
             onClick={() => setActiveTab("orders")}
-            className={`flex-1 py-2 text-md font-bold text-center ${
+            className={`flex-1 pb-2 ${
               activeTab === "orders"
                 ? "text-orange-600 border-b-2 border-orange-600"
-                : "text-gray-500"
+                : "text-gray-400"
             }`}
           >
-            Orders
+            Orders{" "}
             <span
-              className={`ml-2 rounded-full px-1 py-0.5 text-sm ${
+              className={`ml-1 px-2 py-0.5 rounded-full text-xs ${
                 activeTab === "orders"
                   ? "bg-orange-100 text-orange-600"
-                  : "bg-gray-200 text-gray-500"
+                  : "bg-gray-200 text-gray-400"
               }`}
             >
               0
             </span>
           </button>
 
-          {/* Item List Tab */}
           <button
             onClick={() => setActiveTab("items")}
-            className={`flex-1 py-2 text-md font-bold text-center ${
+            className={`flex-1 pb-2 ${
               activeTab === "items"
                 ? "text-orange-600 border-b-2 border-orange-600"
-                : "text-gray-500"
+                : "text-gray-400"
             }`}
           >
-            Item List
+            Item List{" "}
             <span
-              className={`ml-2 rounded-full px-1 py-0.5 text-sm ${
+              className={`ml-1 px-2 py-0.5 rounded-full text-xs ${
                 activeTab === "items"
                   ? "bg-orange-100 text-orange-600"
-                  : "bg-gray-200 text-gray-500"
+                  : "bg-gray-200 text-gray-400"
               }`}
             >
               0
             </span>
           </button>
+
         </div>
       </div>
 
-      {/* BODY — CONTENT BASED ON TAB */}
-      <div className="flex-1 p-6 flex flex-col items-center justify-start text-center">
+      {/* Mobile Content */}
+      <div className="flex-1 flex justify-center items-start p-6 text-center">
 
-        {/* ORDERS TAB CONTENT */}
         {activeTab === "orders" && (
-          <div className="mt-14">
-            <div className="text-6xl mb-6">🛒</div>
-            <h2 className="text-lg font-semibold mb-2">No Orders Yet</h2>
-            <p className="text-gray-500 mb-6">
+          <div className="mt-10">
+            <div className="text-6xl mb-4">🛒</div>
+            <h2 className="font-semibold text-lg mb-2">No Orders Yet</h2>
+            <p className="text-gray-500 text-sm max-w-xs mx-auto mb-6">
               You haven’t ordered anything yet. Place your first order.
             </p>
 
-            <button className="bg-orange-500 text-white px-6 py-3 rounded-md shadow hover:bg-orange-600 transition">
+            <button
+              onClick={goToMenu}
+              className="bg-orange-500 text-white px-6 py-3 rounded-md shadow-md w-full max-w-[200px]"
+            >
               Start Ordering
             </button>
           </div>
         )}
 
-        {/* ITEM LIST TAB CONTENT */}
         {activeTab === "items" && (
-          <div className="mt-14">
-            <div className="text-6xl mb-6">📄</div>
-            <h2 className="text-lg font-semibold mb-2">No Items Added</h2>
-            <p className="text-gray-500 mb-6">
+          <div className="mt-10">
+            <div className="text-6xl mb-4">📄</div>
+            <h2 className="font-semibold text-lg mb-2">No Items Added</h2>
+            <p className="text-gray-500 text-sm max-w-xs mx-auto mb-6">
               Your item list is empty. Add items from the menu.
             </p>
 
-            <button className="bg-orange-500 text-white px-6 py-3 rounded-md shadow hover:bg-orange-600 transition">
+            <button
+              onClick={goToMenu}
+              className="bg-orange-500 text-white px-6 py-3 rounded-md shadow-md w-full max-w-[200px]"
+            >
               Browse Menu
             </button>
           </div>
         )}
       </div>
+
     </main>
   );
 }

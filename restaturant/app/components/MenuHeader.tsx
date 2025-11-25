@@ -7,9 +7,10 @@ export default function MenuHeader() {
   useEffect(() => {
     const OPEN_TIME = "08:00";
     const OPEN_DATE = new Date("2025-11-22");
-    const now = new Date();
 
+    const now = new Date();
     const openAt = new Date(OPEN_DATE);
+
     const [h, m] = OPEN_TIME.split(":").map(Number);
     openAt.setHours(h, m, 0, 0);
 
@@ -17,32 +18,38 @@ export default function MenuHeader() {
   }, []);
 
   return (
-    <div className="px-4 py-3 bg-white shadow-sm sticky top-0 z-30">
+    <header className="px-4 py-3 bg-white shadow-sm sticky top-0 z-40">
+      {/* Top Row */}
       <div className="flex items-center justify-between">
+        {/* Left: Logo + Name */}
         <div className="flex items-center gap-3">
           <img
-            src="/mnt/data/Screenshot_2025-11-21-19-11-11-403_com.android.chrome.jpg"
-            className="w-10 h-10 rounded"
+            src="/logo.avif"   // 🔥 Correct Next.js public folder image
+            className="w-10 h-10 rounded-md object-cover"
+            alt="Restaurant Logo"
           />
+
           <div>
-            <div className="text-sm font-medium">Capella Bakery</div>
-            <div className="text-xs text-gray-500">7</div>
+            <div className="text-sm font-semibold">Capella Bakery</div>
+            <div className="text-xs text-gray-500">7 Items</div>
           </div>
         </div>
 
-        <button className="text-sm border px-3 py-1 rounded-full bg-white">
+        {/* Right: Group Order */}
+        <button className="text-xs text-black bg-gray-200 px-3 py-1 rounded-full">
           Group Order
         </button>
       </div>
 
+      {/* Closed Message */}
       {isClosed && (
         <div className="mt-3">
           <div className="text-sm text-red-600 border border-red-200 rounded-md px-3 py-2 bg-red-50">
-            Sorry! Restaurant is closed now. Please try after 22 November 2025,
-            08:00 AM
+            Sorry! Restaurant is closed now. Please try after{" "}
+            <span className="font-semibold">22 November 2025, 08:00 AM</span>.
           </div>
         </div>
       )}
-    </div>
+    </header>
   );
 }

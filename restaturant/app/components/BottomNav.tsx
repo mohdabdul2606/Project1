@@ -4,23 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { FC, ReactNode } from "react";
 
-// Icon Props Type
 interface IconProps {
   name: "home" | "menu" | "orders" | "bill";
   className?: string;
 }
 
-// Typed Icon Component
 const Icon: FC<IconProps> = ({ name, className }) => {
   const icons: Record<IconProps["name"], ReactNode> = {
     home: (
       <svg
         viewBox="0 0 24 24"
-        width="22"
-        height="22"
+        width="24"
+        height="24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
         className={className}
@@ -34,11 +32,11 @@ const Icon: FC<IconProps> = ({ name, className }) => {
     menu: (
       <svg
         viewBox="0 0 24 24"
-        width="22"
-        height="22"
+        width="24"
+        height="24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
         className={className}
@@ -51,11 +49,11 @@ const Icon: FC<IconProps> = ({ name, className }) => {
     orders: (
       <svg
         viewBox="0 0 24 24"
-        width="22"
-        height="22"
+        width="24"
+        height="24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
         className={className}
@@ -68,11 +66,11 @@ const Icon: FC<IconProps> = ({ name, className }) => {
     bill: (
       <svg
         viewBox="0 0 24 24"
-        width="22"
-        height="22"
+        width="24"
+        height="24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
         className={className}
@@ -87,43 +85,49 @@ const Icon: FC<IconProps> = ({ name, className }) => {
   return icons[name];
 };
 
-// Bottom Navigation
 export default function BottomNav() {
   const pathname = usePathname() ?? "/";
 
-  const items: { href: string; label: string; icon: IconProps["name"] }[] = [
-    { href: "/", label: "Home", icon: "home" },
-    { href: "/menu", label: "Menu", icon: "menu" },
-    { href: "/orders", label: "Orders", icon: "orders" },
-    { href: "/bill", label: "Bill", icon: "bill" },
+  const items = [
+    { href: "/", label: "Home", icon: "home" as const },
+    { href: "/menu", label: "Menu", icon: "menu" as const },
+    { href: "/orders", label: "Orders", icon: "orders" as const },
+    { href: "/bill", label: "Bill", icon: "bill" as const },
   ];
+
+  const vibrate = () => {
+    if (navigator.vibrate) navigator.vibrate(10);
+  };
 
   return (
     <nav
-      className="fixed bottom-0 left-0 w-full z-50 bg-white/95 backdrop-blur border-t border-gray-200"
-      style={{
-        paddingBottom: "env(safe-area-inset-bottom)", // iPhone safe area
-      }}
-      aria-label="Bottom navigation"
+      className="fixed bottom-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md border-t border-gray-200"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="max-w-3xl mx-auto">
-        <div className="flex justify-between items-center px-4 py-2">
+      <div className="max-w-md mx-auto">
+        <div className="flex justify-between items-center px-4 py-1">
           {items.map((item) => {
             const active = pathname === item.href;
 
             return (
               <Link
                 key={item.href}
+                onClick={vibrate}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex flex-col items-center text-xs gap-1 py-2 px-1 w-full transition-colors ${
+                className={`flex flex-col items-center text-[11px] gap-1 py-2 w-full transition-all ${
                   active
-                    ? "text-orange-600"
-                    : "text-gray-500 hover:text-gray-800"
+                    ? "text-orange-600 font-semibold"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                <Icon name={item.icon} className="inline-block" />
+                <Icon name={item.icon} className="transition-transform duration-300" />
+
                 <span className="leading-none">{item.label}</span>
+
+                {active && (
+                  <div className="h-[3px] w-6 bg-orange-500 rounded-full mt-1"></div>
+                )}
               </Link>
             );
           })}
