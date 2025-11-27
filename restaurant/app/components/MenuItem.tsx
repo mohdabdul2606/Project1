@@ -1,9 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Item } from "../../types";
+import type { Item } from "../../types";
 
-export default function MenuItem({ item }: { item: Item }) {
+type MenuItemProps = {
+  item: Item;
+  quantity: number;
+  onChangeQuantity: (itemId: string, delta: number) => void;
+};
+
+export default function MenuItem({
+  item,
+  quantity,
+  onChangeQuantity,
+}: MenuItemProps) {
   const [expanded, setExpanded] = useState(false);
 
   const shortDesc =
@@ -11,8 +21,10 @@ export default function MenuItem({ item }: { item: Item }) {
       ? item.desc.slice(0, 80) + "..."
       : item.desc;
 
+  const isInCart = quantity > 0;
+
   return (
-    <div className="px-4 py-4 flex flex-col gap-3 border-b border-gray-200 bg-white">
+    <div className="px-4 py-4 flex flex-col gap-3 bg-white">
       <div className="flex items-start gap-3">
         {/* Veg / Non-Veg Icon */}
         <div className="mt-1">
@@ -33,31 +45,55 @@ export default function MenuItem({ item }: { item: Item }) {
         <div className="flex-1 min-w-0">
           <div className="flex justify-between gap-3">
             <div className="min-w-0">
-              <p className="font-semibold text-sm leading-tight">{item.title}</p>
+              <p className="font-semibold text-sm leading-tight">
+                {item.title}
+              </p>
 
               <p className="mt-1 text-sm font-semibold text-gray-800">
                 ₹ {item.price.toFixed(2)}
               </p>
             </div>
 
-            {/* Image + Add Button */}
-            {item.image && (
-              <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <div className="w-24 h-20 rounded-md overflow-hidden bg-gray-100">
+            {/* Image + Add/Qty Button */}
+            <div className="flex flex-col items-end gap-2 flex-shrink-0">
+              <div className="w-24 h-20 rounded-md overflow-hidden bg-gray-100">
+                {item.image && (
                   <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
-                </div>
+                )}
+              </div>
 
-                <button className="px-4 py-1 rounded-lg border border-orange-500 text-orange-600 text-xs font-medium active:scale-95 transition">
+              {/* Swiggy-style Add / Counter */}
+              {!isInCart ? (
+                <button
+                  onClick={() => onChangeQuantity(item.id, 1)}
+                  className="px-4 py-1 rounded-lg border border-orange-500 text-orange-600 text-xs font-medium active:scale-95 transition bg-white"
+                >
                   + Add
                 </button>
+              ) : (
+                <div className="flex items-center gap-2 bg-white border border-orange-500 rounded-full px-2 py-1 text-xs font-medium text-orange-600">
+                  <button
+                    onClick={() => onChangeQuantity(item.id, -1)}
+                    className="w-6 h-6 flex items-center justify-center rounded-full border border-orange-500"
+                  >
+                    -
+                  </button>
+                  <span className="min-w-[16px] text-center">{quantity}</span>
+                  <button
+                    onClick={() => onChangeQuantity(item.id, 1)}
+                    className="w-6 h-6 flex items-center justify-center rounded-full border border-orange-500"
+                  >
+                    +
+                  </button>
+                </div>
+              )}
 
-                <span className="text-[11px] text-gray-400">Customisable</span>
-              </div>
-            )}
+              <span className="text-[11px] text-gray-400">Customisable</span>
+            </div>
           </div>
 
           {/* Description with Read More toggle */}

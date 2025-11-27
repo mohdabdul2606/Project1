@@ -1,11 +1,21 @@
 "use client";
+
 import React from "react";
 
-export default function Header({ count = 0 }: { count?: number }) {
-  return (
-    <header className="bg-white px-4 py-3  sticky top-0 z-50">
-      <div className="flex items-center justify-between">
+type HeaderProps = {
+  count: number;
+  isGroupOrder: boolean;
+  onToggleGroupOrder: () => void;
+};
 
+export default function Header({
+  count = 0,
+  isGroupOrder,
+  onToggleGroupOrder,
+}: HeaderProps) {
+  return (
+    <header className="bg-white px-4 py-3 sticky top-0 z-50 shadow-sm">
+      <div className="flex items-center justify-between">
         {/* LEFT — LOGO + TITLE */}
         <div className="flex items-center gap-3">
           <img
@@ -22,13 +32,20 @@ export default function Header({ count = 0 }: { count?: number }) {
           </div>
         </div>
 
-        {/* RIGHT — COUNT + BUTTON */}
+        {/* RIGHT — COUNT + GROUP ORDER BUTTON */}
         <div className="flex items-center gap-2">
           <div className="text-xs text-black bg-gray-200 px-3 py-1 rounded-full">
             {count}
           </div>
 
-          <button className="text-xs text-black bg-gray-200 px-3 py-1 rounded-full">
+          <button
+            onClick={onToggleGroupOrder}
+            className={`text-xs px-3 py-1 rounded-full border transition ${
+              isGroupOrder
+                ? "bg-orange-500 text-white border-orange-500"
+                : "bg-gray-200 text-black border-gray-300"
+            }`}
+          >
             Group Order
           </button>
         </div>
